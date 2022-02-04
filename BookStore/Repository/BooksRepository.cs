@@ -92,6 +92,16 @@ namespace BookStore.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task DeleteBookAsync(int bookid)
+        {
+            var Book = new BooksModel()
+            {
+                ID = bookid
+            };
+            _context.BookStores.Remove(Book);
+            await _context.SaveChangesAsync();
+        }
         
     }
 }

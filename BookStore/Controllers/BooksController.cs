@@ -21,12 +21,14 @@ namespace BookStore.Controllers
         {
             _bookRepository = bookRepository;
         }
+        // GET api/Books
         [HttpGet("")]
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await _bookRepository.GetAllBooksAsync();
             return Ok(books);
         }
+        // GET api/Books/<id>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookById([FromRoute]int id)
         {
@@ -37,6 +39,7 @@ namespace BookStore.Controllers
             }
             return Ok(book);
         }
+        //Post api/Books
         [HttpPost("")]
         public async Task<IActionResult> AddBookAsync([FromBody]BooksModel booksModel)
         {
@@ -44,6 +47,7 @@ namespace BookStore.Controllers
             return CreatedAtAction(nameof(GetBookById), new { id = id, controller = "books" },id);
 
         }
+        //Put api/Books/<id>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBookAsync([FromRoute]int id,[FromBody]BooksModel booksModel)
         {
@@ -51,10 +55,18 @@ namespace BookStore.Controllers
             return Ok();
 
         }
+        //Patch api/Books/<id>
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdatePropertiesAsync([FromRoute]int id,[FromBody]JsonPatchDocument booksModel)
         {
             await _bookRepository.UpdatePropertiesAsync(id, booksModel);
+            return Ok();
+        }
+        //Delete api/Books/<id>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBook([FromRoute]int id)
+        {
+            await _bookRepository.DeleteBookAsync(id);
             return Ok();
         }
     }
