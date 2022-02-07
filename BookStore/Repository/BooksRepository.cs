@@ -1,4 +1,5 @@
-﻿using BookStore.Data;
+﻿using AutoMapper;
+using BookStore.Data;
 using BookStore.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
@@ -12,58 +13,31 @@ namespace BookStore.Repository
     public class BooksRepository : IBookRepository
     {
         private readonly BookStoreContext _context;
+        private readonly IMapper _mapper;
 
-        public BooksRepository(BookStoreContext context)
+        public BooksRepository(BookStoreContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<List<BooksModel>> GetAllBooksAsync()
         {
-            var books = await _context.BookStores.Select(x => new BooksModel()
-            {
-                ID = x.ID,
-                Name = x.Name,
-                Description = x.Description,
-                price = x.price,
-                PublishedOn = x.PublishedOn,
-                Pages = x.Pages,
-                Rating = x.Rating,
-            }).ToListAsync();
-            
-            return books;
+            var books = await _context.BookStores.ToListAsync();
+            return _mapper.Map<List<BooksModel>>(books);
         }
 
         public async Task<BooksModel> GetBookByIDAsync(int id)
         {
-            var book = await _context.BookStores.Where(x => x.ID == id).Select(x => new BooksModel()
-            {
-                ID = x.ID,
-                Name = x.Name,
-                Description = x.Description,
-                price = x.price,
-                PublishedOn = x.PublishedOn,
-                Pages = x.Pages,
-                Rating = x.Rating,
-            }).FirstOrDefaultAsync();
-
-            return book;
+            var book = await _context.BookStores.FindAsync(id);
+            return _mapper.Map<BooksModel>(book);
         }
 
         public async Task<int> AddBookAsync(BooksModel booksModel)
         {
-            var book = new BooksModel()
-            {
-                Name = booksModel.Name,
-                Description = booksModel.Description,
-                price = booksModel.price,
-                PublishedOn = booksModel.PublishedOn,
-                Pages = booksModel.Pages,
-                Rating = booksModel.Rating
-            };
+            var book = _mapper.Map<BooksModel>(booksModel);
             _context.BookStores.Add(book);
             await _context.SaveChangesAsync();
-
             return book.ID;
         }
 

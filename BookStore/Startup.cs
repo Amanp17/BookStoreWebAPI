@@ -35,8 +35,8 @@ namespace BookStore
             options.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")
                 ));
+            services.AddAutoMapper(typeof(Startup));
             services.AddTransient<IBookRepository,BooksRepository>();
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BookStore", Version = "v1" });
